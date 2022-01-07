@@ -1,4 +1,4 @@
-package main
+package twitter
 
 import (
 	"fmt"
@@ -60,6 +60,7 @@ func makeTestClient() *twitter.Client {
 	return client
 }
 func Test_synchronize(t *testing.T) {
+
 	t.Run("Synchronize", func(t *testing.T) {
 		expected := &twitter.FriendIDs{
 			IDs:               []int64{178082406, 3318241001, 1318020818, 191714329, 376703838},
@@ -69,13 +70,13 @@ func Test_synchronize(t *testing.T) {
 			PreviousCursorStr: "-1516924983503961435",
 		}
 
-		assert.Equal(t, expected, expected)
-
-		Synchronize(makeTestClient())
+		err = Synchronize(makeTestClient())
+		assert.Nil(t, err)
 
 		// count persisted friends
-		var c int
-		db.Model(&User{}).Count(&c)
-		assert.Equal(t, len(expected.IDs), c)
+		var c int64
+		err = db.Model(&User{}).Count(&c).Error
+		assert.Nil(t, err)
+		assert.Equal(t, int64(len(expected.IDs)), c)
 	})
 }

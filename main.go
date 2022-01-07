@@ -8,8 +8,9 @@ import (
 	"time"
 
 	"github.com/coreos/pkg/flagutil"
-	"github.com/dghubble/go-twitter/twitter"
+	go_twitter "github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
+	"github.com/philipsahli/unfollow/pkg/twitter"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -33,13 +34,13 @@ type Follower struct {
 	ID int64 `gorm:"primary_key"`
 }
 
-var client *twitter.Client
+var client *go_twitter.Client
 
-func makeClient(consumerKey *string, consumerSecret *string, accessToken *string, accessSecret *string) *twitter.Client {
+func makeClient(consumerKey *string, consumerSecret *string, accessToken *string, accessSecret *string) *go_twitter.Client {
 	config := oauth1.NewConfig(*consumerKey, *consumerSecret)
 	token := oauth1.NewToken(*accessToken, *accessSecret)
 	httpClient := config.Client(oauth1.NoContext, token)
-	client := twitter.NewClient(httpClient)
+	client := go_twitter.NewClient(httpClient)
 	return client
 }
 
@@ -75,9 +76,9 @@ func main() {
 	db.CreateTable(&User{})
 
 	// Verify Credentials
-	verifyParams := &twitter.AccountVerifyParams{
-		SkipStatus:   twitter.Bool(true),
-		IncludeEmail: twitter.Bool(true),
+	verifyParams := &go_twitter.AccountVerifyParams{
+		SkipStatus:   go_twitter.Bool(true),
+		IncludeEmail: go_twitter.Bool(true),
 	}
 	client.Accounts.VerifyCredentials(verifyParams)
 	// fmt.Printf("User's ACCOUNT:\n%+v\n", user)
@@ -127,9 +128,9 @@ func main() {
 	// 	db.FirstOrCreate(&user, user)
 
 	// }
-	Synchronize(client)
+	twitter.Synchronize(client)
 
-	Unfollow()
+	twitter.Unfollow()
 
 	// friendsListParams := &twitter.FriendListParams{
 	// 	ScreenName: screenName,
