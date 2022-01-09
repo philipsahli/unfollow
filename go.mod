@@ -1,6 +1,7 @@
 module github.com/philipsahli/unfollow
 
-go 1.16
+// +heroku goVersion go1.17
+go 1.17
 
 require (
 	github.com/cenkalti/backoff/v4 v4.1.2 // indirect
